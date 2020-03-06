@@ -6,8 +6,8 @@ const run = require('./run');
 module.exports.name = 'OsuerCalendar';
 // 插件处理和输出
 module.exports.apply = (ctx) => {
-    ctx.cpmmand('今日运势')
+    ctx.command('今日运势')
         .action(({ meta }) => {
-            return run(meta, next)
+            return run(meta);
         });
 };
