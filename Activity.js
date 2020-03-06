@@ -5,7 +5,7 @@ class Activity {
 		this.qqId = qqId;
 		this.today = new Date();
 		this.iday = this.today.getFullYear() * 10000 + (this.today.getMonth() + 1) * 100 + this.today.getDate();
-		this.seed = this.qqId / 114514 * this.iday;
+		this.seed = this.qqId * this.iday;
 
 		this.luck = ["大吉", "中吉", "小吉", "末吉", "凶", "大凶"];
 		this.mods = ["NoMod", "HR", "HD", "DT", "HDHR", "HRDT", "HDDT", "HDDTHR"];
@@ -66,7 +66,7 @@ class Activity {
 		// 随机mod
 		statList.mod = this.getRandomArray(this.mods);
 		// 如果够幸运还有特殊mod
-		if (this.random(this.seed, 100)<=10) statList.specialMod = this.getRandomArray(this.modsSpecial);
+		if (this.random(this.seed/100, 100)<=10) statList.specialMod = this.getRandomArray(this.modsSpecial);
 		// 随机事件
 		const numGood = this.random(this.seed, 114) % 2 + 1;
 		const numBad = this.random(this.seed, 514) % 2 + 1;
