@@ -2,10 +2,11 @@
 
 const Activity = require('./Activity');
 
-function run(meta) {
+function run(meta, eventPath) {
     try {
+        if (!eventPath) return meta.$send("OsuerCalendar尚未初始化完成");
         const qqId = meta.userId;
-        let activity = new Activity(qqId);
+        let activity = new Activity(qqId, eventPath);
         let statList = activity.getStatList();
         let output = `[CQ:at,qq=${qqId}]` + "\n";
         output = output + "今日运势：" + statList.luck + "\n";

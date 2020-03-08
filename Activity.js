@@ -1,62 +1,18 @@
 'use strict';
 
+
 class Activity {
-	constructor(qqId) {
+	constructor(qqId, eventPath) {
 		this.qqId = qqId;
 		this.today = new Date();
 		this.iday = this.today.getFullYear() * 10000 + (this.today.getMonth() + 1) * 100 + this.today.getDate();
 		this.seed = this.qqId * this.iday;
+		this.events = require(eventPath);
 
-		this.luck = ["大吉", "中吉", "小吉", "末吉", "凶", "大凶"];
-		this.mods = ["NoMod", "HR", "HD", "DT", "HDHR", "HRDT", "HDDT", "HDDTHR"];
-		this.modsSpecial = ["EZDT", "NF", "SD", "PF", "FL", "EZHD", "Relax", "Auto", "ScoreV2"];
-		this.activities = [{
-			// 才疏学浅，欢迎修改/添加
-			name: "日麻",
-			good: "立直一发自摸！",
-			bad: "碰喵吃喵杠喵荣喵！"
-		}, {
-			name: "MP",
-			good: "所向披靡无人能及！",
-			bad: "会被大佬打哭"
-		}, {
-			name: "刷PP",
-			good: "拿pp就跟喝水一样",
-			bad: "acc惨烈"
-		}, {
-			name: "打串图",
-			good: "啪啦啪啦啪啦啪啦啪啦啪啦啪啦 SS！",
-			bad: "300 100 100 50 50 x"
-		}, {
-			name: "打tech图",
-			good: "1pc fc！",
-			bad: "完全没读懂..."
-		}, {
-			name: "打elo",
-			good: "暴打***",
-			bad: "被吸了..."
-		}, {
-			name: "加好友",
-			good: "和大佬成功双向",
-			bad: "大佬为什么不回我..."
-		}, {
-			name: "挑战自己",
-			good: "FDFD也不过如此",
-			bad: "又双叒叕FAIL了..."
-		}, {
-			name: "肛榜",
-			good: "#1轻松到手",
-			bad: "233周目了..."
-		}, {
-			name: "向大佬请教",
-			good: "太棒了，学到许多",
-			bad: "太棒了，什么都没学到"
-		}, {
-			name: "换个模式玩玩",
-			good: "全能大佬就是我",
-			bad: "这咋玩嘛"
-
-		}];
+		this.luck = this.events.luck;
+		this.mods = this.events.mods;
+		this.modsSpecial = this.events.modsSpecial;
+		this.activities = this.events.activities;
 	}
 
 	getStatList() {
