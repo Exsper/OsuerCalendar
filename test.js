@@ -16,11 +16,12 @@ class meta {
 }
 let eventPath = "";
 let needPath = path.join(dirName, "./osuercalendar-events.json");
-let sameplePath = "./osuercalendar-events-sample.json";
-fs.exists(needPath, async function (exists) {
-    if(exists) eventPath = path.join(dirName, sameplePath);
+let sameplePath = path.join(thisPath, "./osuercalendar-events-sample.json");
+fs.exists(needPath, function (exists) {
+    if(exists) eventPath = needPath;
     else {
-        fs.copyFile(sameplePath, needPath, () => {
+        fs.copyFile(sameplePath, needPath, (err) => {
+            if (err) throw err;
             eventPath = needPath;
         });
     }
