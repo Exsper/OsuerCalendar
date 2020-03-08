@@ -10,7 +10,7 @@ const thisPath = __dirname;
 module.exports.name = 'osuercalendar';
 // 插件处理和输出
 module.exports.apply = (ctx, options = {}) => {
-    const filePath = options.filePath || thisPath + "events.json";
+    const filePath = options.filePath || path.join(thisPath, "events.json");
     const users = options.users;
     let eventPath = "";
     let sameplePath = path.join(thisPath, "./eventsSample.json");
