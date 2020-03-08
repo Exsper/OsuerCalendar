@@ -3,10 +3,12 @@
 const run = require('./run');
 const fs = require('fs');
 const path = require('path');
+const addEvent = require('./eventsJson').addEvent;
+const delEvent = require('./eventsJson').delEvent;
 const dirName = __dirname;
 const thisPath = __dirname;
 // 模拟meta
-console.log("请输入qq号");
+console.log("请输入qq号或指令");
 class meta {
     constructor(qqId) {
         this.userId = qqId; // 发送者id
@@ -19,7 +21,7 @@ let eventPath = "";
 let needPath = path.join(dirName, "./osuercalendar-events.json");
 let sameplePath = path.join(thisPath, "./osuercalendar-events-sample.json");
 fs.exists(needPath, function (exists) {
-    if(exists) eventPath = needPath;
+    if (exists) eventPath = needPath;
     else {
         fs.copyFile(sameplePath, needPath, (err) => {
             if (err) throw err;
@@ -35,8 +37,19 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 rl.on('line', function (line) {
-    let m = new meta(line);
-    run(m, eventPath);
+
+    if (line === "testadd") {
+        addEvent(meta, eventPath, "13", "g13", "b13");
+    } else if (line === "testadd2") {
+        addEvent(meta, eventPath, "5", "g5", "b5");
+    } else if (line === "testdel") {
+        delEvent(meta, eventPath, "6");
+    } else if (line === "testdel2") {
+        delEvent(meta, eventPath, "15");
+    } else {
+        let m = new meta(line);
+        run(m, eventPath);
+    }
 });
 rl.on('close', function () {
     process.exit();
