@@ -23,8 +23,8 @@ class Activity {
 		// 如果够幸运还有特殊mod
 		if (this.random(this.seed/100, 100)<=10) statList.specialMod = this.getRandomArray(this.modsSpecial);
 		// 随机事件
-		const numGood = this.random(this.seed, 114) % 2 + 1;
-		const numBad = this.random(this.seed, 514) % 2 + 1;
+		const numGood = this.random(this.seed / 9, 114) % 2 + 1;
+		const numBad = this.random(this.seed / 6, 514) % 2 + 1;
 		const randomActivities = this.getRandomArray(this.activities, numGood + numBad);
 		statList.goodList = randomActivities.slice(0, numGood);
 		statList.badList = randomActivities.slice(numGood);
@@ -41,7 +41,7 @@ class Activity {
 
 		let result = [];
 		for (let i = size; i > 0; --i) {
-			let index = this.random(this.seed, temp.length) - 1;
+			let index = this.random(this.seed * i, temp.length) - 1;
 			result.push(array[temp[index]]);
 			temp.splice(index, 1);
 		}
