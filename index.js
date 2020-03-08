@@ -10,17 +10,16 @@ const thisPath = __dirname;
 module.exports.name = 'osuercalendar';
 // 插件处理和输出
 module.exports.apply = (ctx, options = {}) => {
-    const dirpath = options.dirpath || thisPath;
+    const filePath = options.filePath || thisPath + "events.json";
     const users = options.users;
     let eventPath = "";
-    let needPath = path.join(dirpath, "./osuercalendar-events.json");
-    let sameplePath = path.join(thisPath, "./osuercalendar-events-sample.json");
-    fs.exists(needPath, function (exists) {
-        if (exists) eventPath = needPath;
+    let sameplePath = path.join(thisPath, "./eventsSample.json");
+    fs.exists(filePath, function (exists) {
+        if (exists) eventPath = filePath;
         else {
-            fs.copyFile(sameplePath, needPath, (err) => {
+            fs.copyFile(sameplePath, filePath, (err) => {
                 if (err) throw err;
-                eventPath = needPath;
+                eventPath = filePath;
             });
         }
     });
