@@ -7,10 +7,10 @@ const eventsJson = require('./eventsJson');
 const thisPath = __dirname;
 
 // Koishi插件名
-module.exports.name = 'OsuerCalendar';
+module.exports.name = 'osuercalendar';
 // 插件处理和输出
-module.exports.apply = (ctx, options) => {
-    const dirpath = options.dirpath;
+module.exports.apply = (ctx, options = {}) => {
+    const dirpath = options.dirpath || thisPath;
     const users = options.users;
     let eventPath = "";
     let needPath = path.join(dirpath, "./osuercalendar-events.json");

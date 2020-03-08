@@ -21,7 +21,7 @@ module.exports = {
 ### options
 ```javascript
 {
-    dirpath : __dirname,    // 运行后会在你的dirpath下生成"osuercalendar-events.json"文件，方便自行修改，不可省略该项
+    dirpath : __dirname,    // 运行后会在你的dirpath下生成"osuercalendar-events.json"文件，方便自行修改，省略该项则为插件脚本所在目录
     users : [1234567, ...]    // 有权限修改活动的QQ号列表，QQ号为number格式，省略该项则任何人均可修改
 }
 ```
