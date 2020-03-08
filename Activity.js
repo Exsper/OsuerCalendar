@@ -2,17 +2,16 @@
 
 
 class Activity {
-	constructor(qqId, eventPath) {
+	constructor(qqId, events) {
 		this.qqId = qqId;
 		this.today = new Date();
 		this.iday = this.today.getFullYear() * 10000 + (this.today.getMonth() + 1) * 100 + this.today.getDate();
 		this.seed = this.qqId * this.iday;
-		this.events = require(eventPath);
 
-		this.luck = this.events.luck;
-		this.mods = this.events.mods;
-		this.modsSpecial = this.events.modsSpecial;
-		this.activities = this.events.activities;
+		this.luck = events.luck;
+		this.mods = events.mods;
+		this.modsSpecial = events.modsSpecial;
+		this.activities = events.activities;
 	}
 
 	getStatList() {

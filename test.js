@@ -4,6 +4,7 @@ const run = require('./run');
 const fs = require('fs');
 const path = require('path');
 const dirName = __dirname;
+const thisPath = __dirname;
 // 模拟meta
 console.log("请输入qq号");
 class meta {
