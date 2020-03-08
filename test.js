@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const addEvent = require('./eventsJson').addEvent;
 const delEvent = require('./eventsJson').delEvent;
-const dirName = __dirname;
+const dirpath = __dirname;
 const thisPath = __dirname;
 // 模拟meta
 console.log("请输入qq号或指令");
@@ -18,7 +18,7 @@ class meta {
     }
 }
 let eventPath = "";
-let needPath = path.join(dirName, "./osuercalendar-events.json");
+let needPath = path.join(dirpath, "./osuercalendar-events.json");
 let sameplePath = path.join(thisPath, "./osuercalendar-events-sample.json");
 fs.exists(needPath, function (exists) {
     if (exists) eventPath = needPath;
