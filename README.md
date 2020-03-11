@@ -21,7 +21,7 @@ module.exports = {
 ### options
 ```javascript
 {
-    filePath : __dirname + "/events.json",    // 如果不存在则会自动生成预置文件，方便自行修改，省略该项则为插件脚本所在目录
+    filePath : __dirname + "/events.json",    // 如果不存在则会自动生成预置文件，方便自行修改，省略该项则在node_modules文件夹上一层创建events.json文件
     // 或者 filePath : "./events.json",
     users : [1234567, ...]    // 有权限修改活动的QQ号列表，QQ号为number格式，省略该项则任何人均可修改
 }
