@@ -3,13 +3,15 @@
 const run = require('./run');
 const fs = require('fs');
 const path = require('path');
-const eventsJson = require('./eventsJson');
+const EventsJson = require('./eventsJson');
 const thisPath = __dirname;
 
 // Koishi插件名
 module.exports.name = 'osuercalendar';
 // 插件处理和输出
 module.exports.apply = (ctx) => {
+    const eventsJson = new EventsJson();
+
     const eventPath = path.join(thisPath, "../../osuercalendar-events.json");
     const userPath = path.join(thisPath, "../../osuercalendar-users.json");
     const samepleEventPath = path.join(thisPath, "./eventsSample.json");
