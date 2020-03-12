@@ -65,7 +65,7 @@ class eventsJsonUtils {
             if (!events) return meta.$send("读取活动文件失败");
             if (!events.pending) return meta.$send("找不到任何待审核活动");
             let pendingActivityIndex = events.pending.findIndex((item) => {
-                return (item.name === pendingActivity.name);
+                return (item.name === name);
             })
             if (pendingActivityIndex < 0) return meta.$send("找不到该待审核活动");
             events.pending = events.pending.filter(item => { item.name !== name });
