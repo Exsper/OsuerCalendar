@@ -192,7 +192,7 @@ class eventsJsonUtils {
             let length = events.pending.length;
             if (length > 10) meta.$send("待审核活动较多，只显示前10个");
             for (let i = 0; i < length; i++) {
-                output = output + events.pending[i].name + " " + events.pending[i].good + " " + events.pending[i].bad + "\n";
+                output = output + "活动：" + events.pending[i].name + " 宜：" + events.pending[i].good + " 忌：" + events.pending[i].bad + "\n";
             }
             output = output + '管理员输入 "确认/取消 待审核活动名称" 以审核活动';
             return meta.$send(output);
@@ -206,7 +206,7 @@ class eventsJsonUtils {
                 return (item.name === name);
             })
             if (activityIndex < 0) return meta.$send("找不到该活动");
-            let output = "宜详情：" + events.pending[i].good + " \t忌详情：" + events.pending[i].bad;
+            let output = "宜详情：" + events.pending[activityIndex].good + " \t忌详情：" + events.pending[activityIndex].bad;
             return meta.$send(output);
         });
     }
