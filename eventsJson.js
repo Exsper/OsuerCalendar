@@ -190,6 +190,7 @@ class eventsJsonUtils {
             if (!events) return meta.$send("读取活动文件失败");
             let output = "";
             let length = events.pending.length;
+            if (length < 1) meta.$send("当前没有待审核活动");
             if (length > 10) meta.$send("待审核活动较多，只显示前10个");
             for (let i = 0; i < length; i++) {
                 output = output + "活动：" + events.pending[i].name + " 宜：" + events.pending[i].good + " 忌：" + events.pending[i].bad + "\n";
