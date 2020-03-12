@@ -5,7 +5,6 @@ const fs = require('fs');
 
 function run(meta, eventPath) {
     try {
-        if (!eventPath) return meta.$send("OsuerCalendar尚未初始化完成");
         const qqId = meta.userId;
         fs.readFile(eventPath, (err,data) => {
             if(err) {

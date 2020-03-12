@@ -3,40 +3,66 @@
 const run = require('./run');
 const fs = require('fs');
 const path = require('path');
-const eventsJson = require('./eventsJson');
+const EventsJson = require('./eventsJson');
 const thisPath = __dirname;
 
 // Koishi插件名
 module.exports.name = 'osuercalendar';
 // 插件处理和输出
-module.exports.apply = (ctx, options = {}) => {
-    const filePath = options.filePath || path.join(thisPath, "../../events.json");
-    const users = options.users;
-    let eventPath = "";
-    let sameplePath = path.join(thisPath, "./eventsSample.json");
-    fs.exists(filePath, function (exists) {
-        if (exists) eventPath = filePath;
-        else {
-            fs.copyFile(sameplePath, filePath, (err) => {
+module.exports.apply = (ctx) => {
+    const eventsJson = new EventsJson();
+
+    const eventPath = path.join(thisPath, "../../osuercalendar-events.json");
+    const userPath = path.join(thisPath, "../../osuercalendar-users.json");
+    const samepleEventPath = path.join(thisPath, "./eventsSample.json");
+    const samepleUserPath = path.join(thisPath, "./usersSample.json");
+
+    fs.exists(eventPath, function (exists) {
+        if (!exists) {
+            fs.copyFile(samepleEventPath, eventPath, (err) => {
                 if (err) throw err;
-                eventPath = filePath;
             });
         }
     });
-    ctx.command('今日运势')
-        .action(({ meta }) => {
-            return run(meta, eventPath);
-        });
-    ctx.command('增加活动 <arg1> <arg2> <arg3>')
-        .action(({ meta }, arg1, arg2, arg3) => {
-            if (!(arg1 && arg2 && arg3)) return meta.$send("请输入正确参数：增加活动 活动名称 宜详情 忌详情");
-            else if (!!users && users.indexOf(meta.userId) < 0) return meta.$send("抱歉，您没有权限修改活动");
-            else return eventsJson.addEvent(meta, eventPath, arg1, arg2, arg3);
-        });
-    ctx.command('删除活动 <arg1>')
-        .action(({ meta }, arg1) => {
-            if (!arg1) return meta.$send("请输入正确参数：删除活动 活动名称");
-            else if (!!users && users.indexOf(meta.userId) < 0) return meta.$send("抱歉，您没有权限修改活动");
-            else return eventsJson.delEvent(meta, eventPath, arg1);
-        });
+    fs.exists(userPath, function (exists) {
+        if (!exists){
+            fs.copyFile(samepleUserPath, userPath, (err) => {
+                if (err) throw err;
+            });
+        }
+    });
+    ctx.middleware((meta, next) => {
+        try {
+            const command = meta.message.trim().split(" ").filter(item => item != '');
+            if (command.length < 1) return next();
+            if (command[0] === "今日运势") return run(meta, eventPath);
+            if (command[0] === "添加活动") {
+                if (command.length !== 4) return meta.$send("请输入正确指令：增加活动 活动名称 宜详情 忌详情");
+                return eventsJson.runAdd(meta, eventPath, userPath, command[1], command[2], command[3]);
+            }
+            if (command[0] === "删除活动") {
+                if (command.length !== 2) return meta.$send("请输入正确指令：删除活动 活动名称");
+                return eventsJson.runDel(meta, eventPath, userPath, command[1]);
+            }
+            if (command[0] === "确认") {
+                if (command.length !== 2) return meta.$send("请输入正确指令：确认 待审核活动名称");
+                return eventsJson.confirmPendingEvent(meta, eventPath, userPath, command[1]);
+            }
+            if (command[0] === "取消") {
+                if (command.length !== 2) return meta.$send("请输入正确指令：取消 待审核活动名称");
+                return eventsJson.refusePendingEvent(meta, eventPath, userPath, command[1]);
+            }
+            if (command[0] === "待审核") {
+                return eventsJson.showPendingEvent(meta, eventPath);
+            }
+            if (command[0] === "查看活动") {
+                if (command.length !== 2) return meta.$send("请输入正确指令：查看活动 活动名称");
+                return eventsJson.showEvent(meta, eventPath, command[1]);
+            }
+        }
+        catch (ex) {
+            console.log(ex);
+            return next();
+        }
+    });
 };
