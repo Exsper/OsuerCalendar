@@ -159,11 +159,7 @@ class eventsJsonUtils {
             if (users.atBlackList && users.atBlackList.indexOf(meta.userId) >= 0) atBlackList = true;
             if (users.atWhiteList && users.atWhiteList.indexOf(meta.userId) >= 0) atWhiteList = true;
             if (isAdmin || atWhiteList) return this.delEvent(meta, eventPath, name);
-            else if (atBlackList) return meta.$send("抱歉，我讨厌你");
-            else this.addPendingEvent(meta, eventPath, { act: "del", name }, (pendingActivity) => {
-                // 不知道如何发送给指定人，暂且先放着吧
-                return;
-            });
+            else return meta.$send("抱歉，您没有权限，无法删除活动");
         });
     }
 
@@ -173,6 +169,7 @@ class eventsJsonUtils {
             if (users.admin && users.admin.indexOf(meta.userId) >= 0) {
                 return this.addEvent(meta, eventPath, name, "", "", true);
             }
+            else return meta.$send("抱歉，您没有审核权限");
         });
     }
 
@@ -182,6 +179,7 @@ class eventsJsonUtils {
             if (users.admin && users.admin.indexOf(meta.userId) >= 0) {
                 return this.delPendingEvent(meta, eventPath, name);
             }
+            else return meta.$send("抱歉，您没有审核权限");
         });
     }
 

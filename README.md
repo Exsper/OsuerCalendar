@@ -25,6 +25,15 @@ osuercalendar-events.json   // 所有黄历内容
 osuercalendar-users.json    // 管理员名单和黑白名单
 ```
 
+#### osuercalendar-users.json
+```javascript
+    // 所有人：可以查看今日运势、查看指定活动内容、查看待审核内容
+    "admin" : [12345678],       // 可以直接添加、删除活动，可以审核待添加活动
+    "whiteList" : [123456788],  // 可以直接添加、删除活动
+    "blackList" : [123456789]   // 不可以提交活动
+    // 其他人：可以提交活动等候审核
+```
+
 
 ### 指令
 koishi指令前缀 + "今日运势"   
