@@ -206,7 +206,7 @@ class eventsJsonUtils {
                 return (item.name === name);
             })
             if (activityIndex < 0) return meta.$send("找不到该活动");
-            let output = "宜详情：" + events.pending[activityIndex].good + " \t忌详情：" + events.pending[activityIndex].bad;
+            let output = "宜详情：" + events.activities[activityIndex].good + " \t忌详情：" + events.activities[activityIndex].bad;
             return meta.$send(output);
         });
     }
