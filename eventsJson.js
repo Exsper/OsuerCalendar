@@ -28,16 +28,18 @@ class eventsJsonUtils {
      * 添加待审核事件
      * @param {Object} meta 
      * @param {String} file 
-     * @param {Function} callback 
      * @param {Object} pendingActivity 
-     * @param {"add"|"del"} [pendingActivity.act] 添加/删除
      * @param {String} [pendingActivity.name] 活动事件名
      * @param {String} [pendingActivity.good] 宜详情
      * @param {String} [pendingActivity.bad] 忌详情
+     * @param {Function} callback 
      */
-    addPendingEvent(meta, file, callback, pendingActivity) {
+    addPendingEvent(meta, file, pendingActivity, callback) {
         this.readJson(file, (events) => {
-            if (!events) meta.$send("读取活动文件失败");
+            if (!events) {
+                meta.$send("读取活动文件失败");
+                return callback(false);
+            }
             if (!events.pending) events.pending = [];
             let pendingActivityIndex = events.pending.findIndex((item) => {
                 return (item.name === pendingActivity.name);
@@ -58,9 +60,33 @@ class eventsJsonUtils {
         });
     }
 
+    delPendingEvent(meta, file, name) {
+        this.readJson(file, (events) => {
+            if (!events) return meta.$send("读取活动文件失败");
+            if (!events.pending) return meta.$send("找不到任何待审核活动");
+            let pendingActivityIndex = events.pending.findIndex((item) => {
+                return (item.name === pendingActivity.name);
+            })
+            if (pendingActivityIndex < 0) return meta.$send("找不到该待审核活动");
+            events.pending = events.pending.filter(item => { item.name !== name });
+            this.writeJson(file, events, (result) => {
+                if (result) return meta.$send("已删除该待审核活动");
+                return meta.$send("写入活动文件失败");
+            });
+        });
+    }
+
     addEvent(meta, file, name, good, bad, fromPending = false) {
         this.readJson(file, (events) => {
-            if (!events) meta.$send("读取活动文件失败");
+            if (!events) return meta.$send("读取活动文件失败");
+            if (fromPending) {
+                let pendingActivityIndex = events.pending.findIndex((item) => {
+                    return (item.name === name);
+                });
+                if (pendingActivityIndex < 0) return meta.$send("待审核活动中找不到该活动");
+                good = events.pending[pendingActivityIndex].good;
+                bad = events.pending[pendingActivityIndex].bad;
+            }
             let oldActivityIndex = events.activities.findIndex((item) => {
                 return (item.name === name);
             })
@@ -70,15 +96,15 @@ class eventsJsonUtils {
                     events.pending = events.pending.filter(item => { item.name !== name });
                 }
                 this.writeJson(file, events, (result) => {
-                    if (result) meta.$send("添加成功");
-                    else meta.$send("添加失败");
+                    if (result) return meta.$send("添加成功");
+                    else return meta.$send("添加失败");
                 });
             } else {
                 events.activities[oldActivityIndex].good = good;
                 events.activities[oldActivityIndex].bad = bad;
                 this.writeJson(file, events, (result) => {
-                    if (result) meta.$send("修改成功");
-                    else meta.$send("修改失败");
+                    if (result) return meta.$send("修改成功");
+                    else return meta.$send("修改失败");
                 });
             }
         });
@@ -86,22 +112,102 @@ class eventsJsonUtils {
 
     delEvent(meta, file, name, fromPending = false) {
         this.readJson(file, (events) => {
-            if (!events) meta.$send("读取活动文件失败");
+            if (!events) return meta.$send("读取活动文件失败");
             let oldActivityIndex = events.activities.findIndex((item) => {
                 return (item.name === name);
             })
             if (oldActivityIndex < 0) {
-                meta.$send("找不到该事件");
+                return meta.$send("找不到该事件");
             } else {
                 events.activities.splice(oldActivityIndex, 1);
                 if (fromPending) {
                     events.pending = events.pending.filter(item => { item.name !== name });
                 }
                 this.writeJson(file, events, (result) => {
-                    if (result) meta.$send("删除成功");
-                    else meta.$send("删除成功");
+                    if (result) return meta.$send("删除成功");
+                    else return meta.$send("删除成功");
                 });
             }
+        });
+    }
+
+    runAdd(meta, eventPath, userPath, name, good, bad) {
+        this.readJson(userPath, (users) => {
+            let isAdmin = false;
+            let atBlackList = false;
+            let atWhiteList = false;
+            if (!users) return meta.$send("读取配置文件失败");
+            if (users.admin && users.admin.indexOf(meta.userId) > 0) isAdmin = true;
+            if (users.atBlackList && users.atBlackList.indexOf(meta.userId) > 0) atBlackList = true;
+            if (users.atWhiteList && users.atWhiteList.indexOf(meta.userId) > 0) atWhiteList = true;
+            if (isAdmin || atWhiteList) return this.addEvent(meta, eventPath, name, good, bad);
+            else if (atBlackList) return meta.$send("抱歉，我讨厌你");
+            else this.addPendingEvent(meta, eventPath, { act: "add", name, good, bad }, (pendingActivity) => {
+                // 不知道如何发送给指定人，暂且先放着吧
+                return;
+            });
+        });
+    }
+
+    runDel(meta, eventPath, userPath, name) {
+        this.readJson(userPath, (users) => {
+            let isAdmin = false;
+            let atBlackList = false;
+            let atWhiteList = false;
+            if (!users) return meta.$send("读取配置文件失败");
+            if (users.admin && users.admin.indexOf(meta.userId) > 0) isAdmin = true;
+            if (users.atBlackList && users.atBlackList.indexOf(meta.userId) > 0) atBlackList = true;
+            if (users.atWhiteList && users.atWhiteList.indexOf(meta.userId) > 0) atWhiteList = true;
+            if (isAdmin || atWhiteList) return this.delEvent(meta, eventPath, name);
+            else if (atBlackList) return meta.$send("抱歉，我讨厌你");
+            else this.addPendingEvent(meta, eventPath, { act: "del", name }, (pendingActivity) => {
+                // 不知道如何发送给指定人，暂且先放着吧
+                return;
+            });
+        });
+    }
+
+    confirmPendingEvent(meta, eventPath, userPath, name) {
+        this.readJson(userPath, (users) => {
+            if (!users) return meta.$send("读取配置文件失败");
+            if (users.admin && users.admin.indexOf(meta.userId) > 0) {
+                return this.addEvent(meta, eventPath, name, "", "", true);
+            }
+        });
+    }
+
+    refusePendingEvent(meta, eventPath, userPath, name) {
+        this.readJson(userPath, (users) => {
+            if (!users) return meta.$send("读取配置文件失败");
+            if (users.admin && users.admin.indexOf(meta.userId) > 0) {
+                return this.delPendingEvent(meta, eventPath, name);
+            }
+        });
+    }
+
+    showPendingEvent(meta, eventPath) {
+        this.readJson(eventPath, (events) => {
+            if (!events) return meta.$send("读取活动文件失败");
+            let output = "";
+            let length = events.pending.length;
+            if (length > 10) meta.$send("待审核活动较多，只显示前10个");
+            for (let i = 0; i < length; i++) {
+                output = output + events.pending[i].name + " " + events.pending[i].good + " " + events.pending[i].bad + "\n";
+            }
+            output = output + '管理员输入 "确认/取消 待审核活动名称" 以审核活动';
+            return meta.$send(output);
+        });
+    }
+
+    showEvent(meta, eventPath, name) {
+        this.readJson(eventPath, (events) => {
+            if (!events) return meta.$send("读取活动文件失败");
+            let activityIndex = events.activities.findIndex((item) => {
+                return (item.name === name);
+            })
+            if (activityIndex < 0) return meta.$send("找不到该活动");
+            let output = "宜详情：" + events.pending[i].good + " \t忌详情：" + events.pending[i].bad;
+            return meta.$send(output);
         });
     }
 }
