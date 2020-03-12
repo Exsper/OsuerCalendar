@@ -1,5 +1,7 @@
 # OsuerCalendar
 
+(unfinished) 带审核系统和黑名单的osu黄历？
+
 ## install
 ```sh
 npm install Exsper/OsuerCalendar

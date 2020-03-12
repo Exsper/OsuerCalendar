@@ -9,9 +9,9 @@ const thisPath = __dirname;
 // Koishi插件名
 module.exports.name = 'osuercalendar';
 // 插件处理和输出
-module.exports.apply = (ctx, options = {}) => {
-    const filePath = options.filePath || path.join(thisPath, "../../events.json");
-    const users = options.users;
+module.exports.apply = (ctx) => {
+    const filePath = path.join(thisPath, "../../osuercalendar-events.json");
+    const users = path.join(thisPath, "../../osuercalendar-users.json");
     let eventPath = "";
     let sameplePath = path.join(thisPath, "./eventsSample.json");
     fs.exists(filePath, function (exists) {
@@ -23,20 +23,23 @@ module.exports.apply = (ctx, options = {}) => {
             });
         }
     });
-    ctx.command('今日运势')
-        .action(({ meta }) => {
-            return run(meta, eventPath);
-        });
-    ctx.command('增加活动 <arg1> <arg2> <arg3>')
-        .action(({ meta }, arg1, arg2, arg3) => {
-            if (!(arg1 && arg2 && arg3)) return meta.$send("请输入正确参数：增加活动 活动名称 宜详情 忌详情");
-            else if (!!users && users.indexOf(meta.userId) < 0) return meta.$send("抱歉，您没有权限修改活动");
-            else return eventsJson.addEvent(meta, eventPath, arg1, arg2, arg3);
-        });
-    ctx.command('删除活动 <arg1>')
-        .action(({ meta }, arg1) => {
-            if (!arg1) return meta.$send("请输入正确参数：删除活动 活动名称");
-            else if (!!users && users.indexOf(meta.userId) < 0) return meta.$send("抱歉，您没有权限修改活动");
-            else return eventsJson.delEvent(meta, eventPath, arg1);
-        });
+    ctx.middleware((meta, next) => {
+        try {
+            const command = meta.message.trim().split(" ").filter(item => item != '');
+            if (command.length < 1) return next();
+            if (command[0] === "今日运势") return run(meta, eventPath);
+            if (command[0] === "添加活动") {
+                if (command.length !== 4) return meta.$send("请输入正确参数：增加活动 活动名称 宜详情 忌详情");
+                return eventsJson.addEvent(meta, eventPath, command[1], command[2], command[3]);
+            }
+            if (command[0] === "删除活动") {
+                if (command.length !== 2) return meta.$send("请输入正确参数：删除活动 活动名称");
+                return eventsJson.delEvent(meta, eventPath, command[1]);
+            }
+        }
+        catch (ex) {
+            console.log(ex);
+            return next();
+        }
+    });
 };
