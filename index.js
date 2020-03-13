@@ -40,7 +40,7 @@ module.exports.apply = (ctx) => {
             if (command[0].length < 2) return next();
             let act = command[0].substring(1);
             if (act === "添加活动") {
-                if (command.length !== 4) return meta.$send("请输入正确指令：增加活动 活动名称 宜详情 忌详情");
+                if (command.length !== 4) return meta.$send("请输入正确指令：添加活动 活动名称 宜详情 忌详情");
                 return eventsJson.runAdd(meta, eventPath, userPath, command[1], command[2], command[3]);
             }
             if (act === "删除活动") {

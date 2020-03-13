@@ -187,7 +187,7 @@ class eventsJsonUtils {
         this.readJson(eventPath, (events) => {
             if (!events) return meta.$send("读取活动文件失败");
             let output = "";
-            if (events.pending) return meta.$send("当前没有待审核活动");
+            if (!events.pending) return meta.$send("当前没有待审核活动");
             let length = events.pending.length;
             if (length < 1) return meta.$send("当前没有待审核活动");
             if (length > 10) {
