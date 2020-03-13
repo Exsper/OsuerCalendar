@@ -18,7 +18,7 @@ class meta {
     }
 }
 let eventPath = "";
-let sameplePath = path.join(thisPath, "./osuercalendar-events-sample.json");
+let sameplePath = path.join(thisPath, "./eventsSample.json");
 fs.exists(filePath, function (exists) {
     if (exists) eventPath = filePath;
     else {
