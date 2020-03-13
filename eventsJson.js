@@ -138,8 +138,8 @@ class eventsJsonUtils {
             let atWhiteList = false;
             if (!users) return meta.$send("读取配置文件失败");
             if (users.admin && users.admin.indexOf(meta.userId) >= 0) isAdmin = true;
-            if (users.atBlackList && users.atBlackList.indexOf(meta.userId) >= 0) atBlackList = true;
-            if (users.atWhiteList && users.atWhiteList.indexOf(meta.userId) >= 0) atWhiteList = true;
+            if (users.blackList && users.blackList.indexOf(meta.userId) >= 0) atBlackList = true;
+            if (users.whiteList && users.whiteList.indexOf(meta.userId) >= 0) atWhiteList = true;
             if (isAdmin || atWhiteList) return this.addEvent(meta, eventPath, name, good, bad);
             else if (atBlackList) return meta.$send("抱歉，我讨厌你");
             else this.addPendingEvent(meta, eventPath, { act: "add", name, good, bad }, (pendingActivity) => {
@@ -156,8 +156,8 @@ class eventsJsonUtils {
             let atWhiteList = false;
             if (!users) return meta.$send("读取配置文件失败");
             if (users.admin && users.admin.indexOf(meta.userId) >= 0) isAdmin = true;
-            if (users.atBlackList && users.atBlackList.indexOf(meta.userId) >= 0) atBlackList = true;
-            if (users.atWhiteList && users.atWhiteList.indexOf(meta.userId) >= 0) atWhiteList = true;
+            if (users.blackList && users.blackList.indexOf(meta.userId) >= 0) atBlackList = true;
+            if (users.whiteList && users.whiteList.indexOf(meta.userId) >= 0) atWhiteList = true;
             if (isAdmin || atWhiteList) return this.delEvent(meta, eventPath, name);
             else return meta.$send("抱歉，您没有权限，无法删除活动");
         });
