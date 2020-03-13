@@ -62,6 +62,7 @@ module.exports.apply = (ctx) => {
                 if (command.length !== 2) return meta.$send("请输入正确指令：查看活动 活动名称");
                 return eventsJson.showEvent(meta, eventPath, command[1]);
             }
+            return next();
         }
         catch (ex) {
             console.log(ex);
