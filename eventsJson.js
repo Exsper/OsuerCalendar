@@ -20,22 +20,26 @@ class eventsJsonUtils {
      * @param {String} [pendingActivity.name] 活动事件名
      * @param {String} [pendingActivity.good] 宜详情
      * @param {String} [pendingActivity.bad] 忌详情
+     * @returns {Boolean} 
      */
     addPendingEvent(meta, file, pendingActivity) {
         let events = this.readJson(file);
         if (!events) {
-            return meta.$send("读取活动文件失败");
+            meta.$send("读取活动文件失败");
+            return false;
         }
         if (!events.pending) events.pending = [];
         let pendingActivityIndex = events.pending.findIndex((item) => {
             return (item.name === pendingActivity.name);
         })
         if (pendingActivityIndex >= 0) {
-            return meta.$send("当前已有该事件待审核");
+            meta.$send("当前已有该事件待审核");
+            return false;
         }
         events.pending.push(pendingActivity);
         this.writeJson(file, events);
-        return meta.$send("已提交审核");
+        meta.$send("已提交审核");
+        return true;
     }
 
     delPendingEvent(meta, file, name) {
@@ -109,14 +113,17 @@ class eventsJsonUtils {
         if (users.whiteList && users.whiteList.indexOf(meta.userId) >= 0) atWhiteList = true;
         if (isAdmin || atWhiteList) return this.addEvent(meta, eventPath, name, good, bad);
         else if (atBlackList) return meta.$send("抱歉，我讨厌你");
-        else this.addPendingEvent(meta, eventPath, { act: "add", name, good, bad }, (pendingActivity) => {
-            let output = "请审核活动：" + pendingActivity.name + " 宜：" + pendingActivity.good + " 忌：" + pendingActivity.bad + "\n";
-            output = output + '输入 "确认/取消 待审核活动名称" 以审核活动';
-            users.admin.map((user) => {
-                sendPrivateMsg(user, output);
-            });
-            return;
-        });
+        else {
+            let result = this.addPendingEvent(meta, eventPath, { act: "add", name, good, bad });
+            if (result) {
+                let output = "请审核活动：" + name + " 宜：" + good + " 忌：" + bad + "\n";
+                output = output + '输入 "确认/取消 待审核活动名称" 以审核活动';
+                users.admin.map((user) => {
+                    sendPrivateMsg(user, output);
+                });
+                return;
+            }
+        }
     }
 
     runDel(meta, eventPath, userPath, name) {
