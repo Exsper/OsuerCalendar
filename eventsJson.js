@@ -24,19 +24,18 @@ class eventsJsonUtils {
     addPendingEvent(meta, file, pendingActivity) {
         let events = this.readJson(file);
         if (!events) {
-            meta.$send("读取活动文件失败");
-            return false;
+            return meta.$send("读取活动文件失败");
         }
         if (!events.pending) events.pending = [];
         let pendingActivityIndex = events.pending.findIndex((item) => {
             return (item.name === pendingActivity.name);
         })
         if (pendingActivityIndex >= 0) {
-            meta.$send("当前已有该事件待审核");
-            return false;
+            return meta.$send("当前已有该事件待审核");
         }
         events.pending.push(pendingActivity);
         this.writeJson(file, events);
+        return meta.$send("已提交审核");
     }
 
     delPendingEvent(meta, file, name) {
@@ -49,6 +48,7 @@ class eventsJsonUtils {
         if (pendingActivityIndex < 0) return meta.$send("找不到该待审核活动");
         events.pending = events.pending.filter(item => { item.name !== name });
         this.writeJson(file, events);
+        return meta.$send("已删除该待审核活动");
     }
 
     addEvent(meta, file, name, good, bad, fromPending = false) {
@@ -71,12 +71,12 @@ class eventsJsonUtils {
                 events.pending = events.pending.filter(item => { item.name !== name });
             }
             this.writeJson(file, events);
-            return;
+            return meta.$send("添加成功");
         } else {
             events.activities[oldActivityIndex].good = good;
             events.activities[oldActivityIndex].bad = bad;
             this.writeJson(file, events);
-            return;
+            return meta.$send("修改成功");
         }
     }
 
@@ -93,7 +93,8 @@ class eventsJsonUtils {
             if (fromPending) {
                 events.pending = events.pending.filter(item => { item.name !== name });
             }
-            return this.writeJson(file, events);
+            this.writeJson(file, events);
+            return meta.$send("删除成功");
         }
     }
 
