@@ -102,7 +102,7 @@ class eventsJsonUtils {
         }
     }
 
-    runAdd(meta, eventPath, userPath, name, good, bad, sendPrivateMsg) {
+    runAdd(meta, eventPath, userPath, name, good, bad, app) {
         let users = this.readJson(userPath);
         let isAdmin = false;
         let atBlackList = false;
@@ -119,7 +119,11 @@ class eventsJsonUtils {
                 let output = "请审核活动：" + name + " 宜：" + good + " 忌：" + bad + "\n";
                 output = output + '输入 "确认/取消 待审核活动名称" 以审核活动';
                 users.admin.map((user) => {
-                    sendPrivateMsg(user, output);
+                    try{
+                        // 这里会报错
+                        app.sender.sendPrivateMsg(user, output);
+                    }
+                    catch {};
                 });
                 return;
             }
