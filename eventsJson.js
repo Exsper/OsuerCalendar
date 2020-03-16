@@ -50,7 +50,7 @@ class eventsJsonUtils {
             return (item.name === name);
         })
         if (pendingActivityIndex < 0) return meta.$send("找不到该待审核活动");
-        events.pending = events.pending.filter(item => item.name !== name );
+        events.pending = events.pending.filter(item => item.name !== name);
         this.writeJson(file, events);
         return meta.$send("已删除该待审核活动");
     }
@@ -72,7 +72,7 @@ class eventsJsonUtils {
         if (oldActivityIndex < 0) {
             events.activities.push({ name, good, bad });
             if (fromPending) {
-                events.pending = events.pending.filter(item => item.name !== name );
+                events.pending = events.pending.filter(item => item.name !== name);
             }
             this.writeJson(file, events);
             return meta.$send("添加成功");
@@ -95,7 +95,7 @@ class eventsJsonUtils {
         } else {
             events.activities.splice(oldActivityIndex, 1);
             if (fromPending) {
-                events.pending = events.pending.filter(item => item.name !== name );
+                events.pending = events.pending.filter(item => item.name !== name);
             }
             this.writeJson(file, events);
             return meta.$send("删除成功");
@@ -119,11 +119,7 @@ class eventsJsonUtils {
                 let output = "请审核活动：" + name + " 宜：" + good + " 忌：" + bad + "\n";
                 output = output + '输入 "确认/取消 待审核活动名称" 以审核活动';
                 users.admin.map((user) => {
-                    try{
-                        // 这里会报错
-                        app.sender.sendPrivateMsg(user, output);
-                    }
-                    catch {};
+                    app.sender.sendPrivateMsgAsync(user, output);
                 });
                 return;
             }
