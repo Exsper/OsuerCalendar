@@ -42,6 +42,7 @@ class Activity {
 		let result = [];
 		for (let i = size; i > 0; --i) {
 			let index = this.random(this.seed * i, temp.length) - 1;
+			if (index<0) index = 0;
 			result.push(array[temp[index]]);
 			temp.splice(index, 1);
 		}
