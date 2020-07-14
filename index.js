@@ -35,7 +35,10 @@ module.exports.apply = (ctx) => {
         try {
             const command = meta.message.trim().split(" ").filter(item => item != '');
             if (command.length < 1) return next();
-            if (command[0] === "今日运势") return run(meta, eventPath);
+            if (command[0] === "今日运势") {
+                if(meta.messageType !== "private") return meta.$send("该功能已限制为私聊查看");
+                return run(meta, eventPath);
+            }
             if (command[0].substring(0, 1) !== "!" && command[0].substring(0, 1) !== "！") return next();
             if (command[0].length < 2) return next();
             let act = command[0].substring(1);
